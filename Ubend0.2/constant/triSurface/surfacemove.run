@@ -1,0 +1,10 @@
+stlFiles=(*.stl)
+
+#Loop through the array and gatherTimes for each xmf file
+for item in "${stlFiles[@]}"
+do
+cp "${item%.*}.stl" "${item%.*}_o.stl"
+done
+
+
+

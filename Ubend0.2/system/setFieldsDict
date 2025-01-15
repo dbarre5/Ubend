@@ -1,0 +1,45 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  8
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      setFieldsDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+defaultFieldValues
+(
+    volScalarFieldValue alpha.water 0
+);
+
+regions
+(
+    surfaceToCell
+    {
+	file "box0p055.stl";
+	outsidePoints ((0.8 0.5 0.1)); // definition of outside
+	includeCut false; // cells cut by surface
+	includeInside yes; // cells not on outside of surf
+	includeOutside no; // cells on outside of surf
+	nearDistance -1; // cells with centre near surf
+	curvature 0.9; // cells within nearDistance
+        fieldValues
+        (
+            volScalarFieldValue alpha.water 1
+        );
+    }
+
+   
+
+);
+
+
+// ************************************************************************* //

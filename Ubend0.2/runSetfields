@@ -1,0 +1,2 @@
+cp 0/alpha.water.orig 0/alpha.water
+setFields

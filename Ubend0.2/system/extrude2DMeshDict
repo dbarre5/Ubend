@@ -1,0 +1,42 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  4.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      extrude2DMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+extrudeModel        linearDirection;
+
+patchInfo
+{}
+
+patchType           empty;
+
+nLayers             6;
+
+expansionRatio      0.8;
+
+linearDirectionCoeffs
+{
+    direction       (0 0 1);
+    thickness       0.064;
+}
+
+wedgeCoeffs
+{
+    axisPt          (0 0 0);
+    axis            (1 0 0);
+    angle           10;
+}
+
+
+// ************************************************************************* //

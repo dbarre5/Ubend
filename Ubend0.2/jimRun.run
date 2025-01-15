@@ -1,0 +1,39 @@
+#!/bin/bash
+#PBS -N test_LA_River_8 
+#PBS -A ERDCV81008LAR
+#PBS -q adh
+#PBS -l select=2:ncpus=36:mpiprocs=36
+#PBS -l walltime=72:00:00
+#PBS -l application=openfoam
+
+## Do Not Change ##
+cd $PBS_O_WORKDIR
+#module load openfoam/v1906
+source /p/home/apps/unsupported/openfoam/v1906/OpenFOAM-v1906/etc/bashrc
+## Do Not Change ##
+
+## Meshing Commands ##
+#mpiexec_mpt -n 1 surfaceFeatureExtract |tee surface.out
+#mpiexec_mpt -n 1 blockMesh |tee blockMesh.out
+#mpiexec_mpt -n 1 decomposePar -force |tee decomposePar.out
+#mpiexec_mpt -n 1 snappyHexMesh -overwrite |tee shm.out
+#mpiexec_mpt -n 1 reconstructParMesh -constant -fullMatch |tee reconstructPar.out
+#mpiexec_mpt -n 1 checkMesh |tee checkMesh.out
+## Meshing Commands ##
+
+
+## Simulation Commands ##
+#mpiexec_mpt -n 1 setFields |tee setFields.out
+##mpiexec_mpt -n 1 decomposePar -latestTime -force |tee decomposePar.out
+mpiexec_mpt -n 1 decomposePar -force |tee decomposePar.out
+mpiexec_mpt -n 72 renumberMesh -overwrite -parallel |tee renumbermesh.out
+mpiexec_mpt -n 72 interFoam -parallel |tee -a interfoam.out
+#mpiexec_mpt -n 1 interFoam  |tee -a interfoam.out
+#mpiexec_mpt -n 1 reconstructPar -latestTime |tee output.out
+#mpiexec_mpt -n 1 reconstructPar |tee output.out
+## Simulation Commands ##
+
+
+
+
+exit

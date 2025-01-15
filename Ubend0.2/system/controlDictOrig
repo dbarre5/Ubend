@@ -1,0 +1,301 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5                                     |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     interFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         2000;
+
+deltaT          0.0001;
+
+writeControl    adjustableRunTime;
+
+writeInterval   0.4;
+
+purgeWrite      3;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+adjustTimeStep  on;
+
+maxCo           1.0;
+maxAlphaCo      1.0;
+
+maxDeltaT       1;
+
+/*
+OptimisationSwitches
+{
+fileHandler collated;
+maxThreadFileBufferSize 2e9;
+}
+*/
+
+//stopAt   noWriteNow;
+
+
+functions
+{
+wallShearStress1
+{
+    // Mandatory entries (unmodifiable)
+    type            wallShearStress;
+    libs            (fieldFunctionObjects);
+
+    // Optional entries (runtime modifiable)
+    patches         ("(bottom|side)"); 
+
+    // Optional (inherited) entries
+    writePrecision  8;
+    writeToFile     true;
+    useUserTime     true;
+    region          region0;
+    enabled         true;
+    log             true;
+    executeControl  writeTime;
+    executeInterval 1;
+    writeControl    outputTime;
+    writeInterval   1;
+}
+
+averagedWallShearStress1
+{
+    // Mandatory entries (unmodifiable)
+    type            surfaceFieldValue;
+    libs            ("libutilityFunctionObjects.so");
+
+    // Mandatory entries (runtime modifiable)
+    fields          (wallShearStress1);
+    operation       areaAverage;
+    regionType      patch;
+    name            bottom;
+
+    // Optional entries (runtime modifiable)
+    //postOperation   none;
+    //weightField     alpha1;
+    //scaleFactor     1.0;
+    //writeArea       false;
+    surfaceFormat   none;
+
+    // Optional (inherited) entries
+    writeFields     true;
+    //scalingFactor   1.0;
+    //writePrecision  8;
+    //writeToFile     true;
+    //useUserTime     true;
+    //region          region0;
+    //enabled         true;
+    //log             true;
+    // timeStart       0;
+    // timeEnd         1000;
+    executeControl  writeTime;
+    executeInterval 1;
+    writeControl    outputTime;
+    writeInterval   1;
+}
+averagedWallShearStress2
+{
+    // Mandatory entries (unmodifiable)
+    type            surfaceFieldValue;
+    libs            ("libutilityFunctionObjects.so");
+
+    // Mandatory entries (runtime modifiable)
+    fields          (wallShearStress1);
+    operation       areaAverage;
+    regionType      patch;
+    name            side;
+
+    // Optional entries (runtime modifiable)
+    //postOperation   none;
+    //weightField     alpha1;
+    //scaleFactor     1.0;
+    //writeArea       false;
+    surfaceFormat   none;
+
+    // Optional (inherited) entries
+    writeFields     true;
+    //scalingFactor   1.0;
+    //writePrecision  8;
+    //writeToFile     true;
+    //useUserTime     true;
+    //region          region0;
+    //enabled         true;
+    //log             true;
+    // timeStart       0;
+    // timeEnd         1000;
+    executeControl  writeTime;
+    executeInterval 1;
+    writeControl    outputTime;
+    writeInterval   1;
+}
+
+multiplyU
+{
+    // Mandatory entries (unmodifiable)
+    type    multiply;
+    libs    (fieldFunctionObjects);
+
+    // Mandatory (inherited) entry (runtime modifiable)
+    fields  (U alpha.water);
+
+    // Optional (inherited) entries
+    result          multU;
+    enabled         true;
+    log             true;
+    executeControl  timeStep;
+    executeInterval 1;
+    writeControl    runTime;
+    writeInterval   1;
+
+}
+
+multiplyP
+{
+    // Mandatory entries (unmodifiable)
+    type    multiply;
+    libs    (fieldFunctionObjects);
+
+    // Mandatory (inherited) entry (runtime modifiable)
+    fields  (p alpha.water);
+
+    // Optional (inherited) entries
+    result          multP;
+    enabled         true;
+    log             true;
+    executeControl  timeStep;
+    executeInterval 1;
+    writeControl    runTime;
+    writeInterval   1;
+}
+
+
+
+
+/////////////////
+centerlineProbes
+{
+  type probes;
+  functionObjectLibs ("libsampling.so");
+  outputControl runTime;
+  outputInterval 1;
+  probeLocations
+  (
+centerlineProbesFileContents
+  );
+  fields
+  (
+    multU
+    multP
+  );
+}
+slice_probes37
+{
+  type probes;
+  functionObjectLibs ("libsampling.so");
+  outputControl runTime;
+  outputInterval 1;
+  probeLocations
+  (
+37ProbesFileContents
+  );
+  fields
+  (
+    multU
+    multP
+  );
+}
+slice_probes103
+{
+  type probes;
+  functionObjectLibs ("libsampling.so");
+  outputControl runTime;
+  outputInterval 1;
+  probeLocations
+  (
+103ProbesFileContents
+  );
+  fields
+  (
+    multU
+    multP
+  );
+}
+downstream0p5_slice_probes
+{
+  type probes;
+  functionObjectLibs ("libsampling.so");
+  outputControl runTime;
+  outputInterval 1;
+  probeLocations
+  (
+0p5ProbesFileContents
+  );
+  fields
+  (
+    multU
+    multP
+  );
+}
+pressure
+    {
+        type           pressure; 
+        functionObjectLibs ("libfieldFunctionObjects.so");
+        writeControl    outputTime;
+        rho     rho; 
+        pRef    0;
+        calcTotal   yes;
+        calcCoeff   no;
+  }
+
+
+   minmaxdomain
+    {
+        type fieldMinMax;
+        libs ("libfieldFunctionObjects.so");
+        enabled true;
+        mode component;
+        writeControl timeStep;
+        writeInterval 1;
+        log true;
+        fields (p U k epsilon nut);
+    }
+
+
+
+
+} 
+
+
+
+
+
+// ************************************************************************* //
